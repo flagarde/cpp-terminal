@@ -31,3 +31,7 @@ jobs:
         with:
           style: file
           database: ${{ env.CMAKE_BINARY_PREFIX }}
+          step-summary: true
+          thread-comments: true
+          files-changed-only: false
+          lines-changed-only: false
