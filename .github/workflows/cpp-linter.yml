@@ -1,6 +1,9 @@
 name: cpp-linter
 
-on: pull_request
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   cpp-linter:
@@ -35,3 +38,4 @@ jobs:
           thread-comments: true
           files-changed-only: false
           lines-changed-only: false
+          version: '17'
