@@ -36,7 +36,7 @@ jobs:
           database: ${{ env.CMAKE_BINARY_PREFIX }}
           step-summary: true
           thread-comments: true
-          files-changed-only: false
+          files-changed-only: true
           lines-changed-only: false
           version: '13'
           tidy-checks: ''
