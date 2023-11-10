@@ -38,5 +38,5 @@ jobs:
           thread-comments: true
           files-changed-only: false
           lines-changed-only: false
-          version: '17'
-          ignore: '.github|${{ env.CMAKE_BINARY_PREFIX }}/_deps/'
+          version: '15'
+          ignore: '.github|_deps'
