@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          style: file
+          style: 'file'
           database: ${{ env.CMAKE_BINARY_PREFIX }}
           step-summary: true
           thread-comments: true
@@ -40,4 +40,4 @@ jobs:
           lines-changed-only: false
           version: '13'
           tidy-checks: ''
-          ignore: '.github|_deps'
+          ignore: '.github|${{ env.CMAKE_BINARY_PREFIX }}/_deps'
