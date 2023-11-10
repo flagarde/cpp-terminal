@@ -38,5 +38,5 @@ jobs:
           thread-comments: true
           files-changed-only: false
           lines-changed-only: false
-          version: '15'
+          version: '13'
           ignore: '.github|_deps'
