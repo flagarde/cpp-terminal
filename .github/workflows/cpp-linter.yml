@@ -39,3 +39,4 @@ jobs:
           files-changed-only: false
           lines-changed-only: false
           version: '17'
+          ignore: '.github|_deps'
