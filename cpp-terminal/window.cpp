@@ -12,7 +12,6 @@
 #include "cpp-terminal/color.hpp"
 #include "cpp-terminal/cursor.hpp"
 #include "cpp-terminal/exception.hpp"
-#include "cpp-terminal/private/conversion.hpp"
 #include "cpp-terminal/private/unicode.hpp"
 #include "cpp-terminal/prompt.hpp"
 #include "cpp-terminal/terminal.hpp"

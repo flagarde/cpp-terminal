@@ -9,9 +9,10 @@
 
 #include "cpp-terminal/event.hpp"
 
-#include "cpp-terminal/private/conversion.hpp"
+#include "cpp-terminal/private/unicode.hpp"
 
 #include <chrono>
+#include <vector>
 
 #if defined(_MSC_VER)
   // Disable stupid warnings on Windows
@@ -214,22 +215,22 @@ void Term::Event::parse(const std::string& str)
     /* Backspace return 127 CTRL+backspace return 8 */
     if(m_container.m_Key == Term::Key::Del) m_container.m_Key = Key(Term::Key::Backspace);
   }
-  else if(str == "\033[I")
+  else if(str == "\u001b[I")
   {
     m_Type              = Type::Focus;
     m_container.m_Focus = Term::Focus(Term::Focus::Type::In);
   }
-  else if(str == "\033[O")
+  else if(str == "\u001b[O")
   {
     m_Type              = Type::Focus;
     m_container.m_Focus = Term::Focus(Term::Focus::Type::Out);
   }
-  else if(str.size() == 2 && str[0] == '\033')
+  else if(str.size() == 2 && str[0] == '\u001b')
   {
     m_container.m_Key = Key(static_cast<Term::Key>(Term::MetaKey::Value::Alt + static_cast<Term::Key>(str[1])));
     m_Type            = Type::Key;
   }
-  else if(str[0] == '\033' && str[1] == '[' && str[str.size() - 1] == 'R')
+  else if(str[0] == '\u001b' && str[1] == '[' && str[str.size() - 1] == 'R')
   {
     std::size_t found = str.find(';', 2);
     if(found != std::string::npos)
@@ -238,7 +239,7 @@ void Term::Event::parse(const std::string& str)
       m_container.m_Cursor = Cursor(static_cast<std::uint16_t>(std::stoi(str.substr(2, found - 2))), static_cast<std::uint16_t>(std::stoi(str.substr(found + 1, str.size() - (found + 2)))));
     }
   }
-  else if(str[0] == '\033' && str[1] == '[' && str[2] == '<')
+  else if(str[0] == '\u001b' && str[1] == '[' && str[2] == '<')
   {
     static std::chrono::time_point<std::chrono::system_clock> old;
     bool                                                      not_too_long{false};

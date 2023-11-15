@@ -6,10 +6,10 @@
 *
 * SPDX-License-Identifier: MIT
 */
-
-#include "cpp-terminal/exception.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "cpp-terminal/private/unicode.hpp"
+
+#include "cpp-terminal/exception.hpp"
 #include "doctest/doctest.h"
 
 #include <string>
@@ -81,4 +81,99 @@ TEST_CASE("utf32 to utf8")
     CHECK(ex.code() == 0);
     CHECK(std::string(ex.what()) == "Invalid UTF32 codepoint.");
   }
+}
+
+TEST_CASE("utf8 to utf32")
+{
+  // First utf8 1 byte
+  std::string    str = (const char*)u8"\u0001";
+  std::u32string s{Term::Private::utf8_to_utf32(str)};
+  std::u32string ref = U"\U00000001";
+  CHECK(s == ref);
+  // last utf8 1 byte
+  str = (const char*)u8"\u007f";
+  s   = {Term::Private::utf8_to_utf32(str)};
+  ref = U"\U0000007f";
+  CHECK(s == ref);
+
+  // First utf8 2 byte
+  str = (const char*)u8"\xc2\x80";
+  s   = {Term::Private::utf8_to_utf32(str)};
+  ref = U"\U00000080";
+  CHECK(s == ref);
+  // Last utf8 2 byte
+  str = (const char*)u8"\xdf\xbf";
+  s   = {Term::Private::utf8_to_utf32(str)};
+  ref = U"߿";
+  CHECK(s == ref);
+
+  // First utf8 3 byte
+  str = (const char*)u8"\xe0\xa0\x80";
+  s   = {Term::Private::utf8_to_utf32(str)};
+  ref = U"ࠀ";
+  CHECK(s == ref);
+  // Last utf8 3 byte
+  str = (const char*)u8"\xef\xbf\xbf";
+  s   = {Term::Private::utf8_to_utf32(str)};
+  ref = U"￿";
+  CHECK(s == ref);
+
+  // First utf8 4 byte
+  str = (const char*)u8"\xf0\x92\x80\x80";
+  s   = {Term::Private::utf8_to_utf32(str)};
+  ref = U"𒀀";
+  CHECK(s == ref);
+  // Last utf8 4 byte
+  str = (const char*)u8"\xf0\x9f\xa7\xbe";
+  s   = {Term::Private::utf8_to_utf32(str)};
+  ref = U"🧾";
+  CHECK(s == ref);
+
+  // Some charabia UTF8
+  str = (const char*)(u8"∮ E⋅da = Q,  n → ∞, ∑ f(i) = ∏ g(i)γνωρίζω ἀπὸ τὴν ὄψηდარგებში⠝⠁⠊⠇ ⠁⠎ ⠹⠑ ⠙როგორიცააᚻ∂∈ℝ∧∪≡∞ ↑↗↨↻⇣ ┐┼╔╘░►☺♀ ﬁ�⑀₂ἠḂᛖᛒᚢᛞᛖразличных\tопеฮั่นเสื่อมโทรมแማደሪያ የለው፥ ግንድ ይዞ ይዞራል።\n");
+  s   = {Term::Private::utf8_to_utf32(str)};
+  ref = U"∮ E⋅da = Q,  n → ∞, ∑ f(i) = ∏ g(i)γνωρίζω ἀπὸ τὴν ὄψηდარგებში⠝⠁⠊⠇ ⠁⠎ ⠹⠑ ⠙როგორიცააᚻ∂∈ℝ∧∪≡∞ ↑↗↨↻⇣ ┐┼╔╘░►☺♀ ﬁ�⑀₂ἠḂᛖᛒᚢᛞᛖразличных\tопеฮั่นเสื่อมโทรมแማደሪያ የለው፥ ግንድ ይዞ ይዞራል።\n";
+  CHECK(s == ref);
+}
+
+TEST_CASE("is_valid_utf8")
+{
+  std::string bad{"\xc3\x28"};
+  CHECK(Term::Private::is_valid_utf8(bad.begin(), bad.end()) == false);
+  bad = "\xa0\xa1";
+  CHECK(Term::Private::is_valid_utf8(bad.begin(), bad.end()) == false);
+  bad = "\xe2\x28\xa1";
+  CHECK(Term::Private::is_valid_utf8(bad.begin(), bad.end()) == false);
+  bad = "\xe2\x82\x28";
+  CHECK(Term::Private::is_valid_utf8(bad.begin(), bad.end()) == false);
+  bad = "\xf0\x28\x8c\xbc";
+  CHECK(Term::Private::is_valid_utf8(bad.begin(), bad.end()) == false);
+  bad = "\xf0\x90\x28\xbc";
+  CHECK(Term::Private::is_valid_utf8(bad.begin(), bad.end()) == false);
+  bad = "\xf0\x28\x8c\x28";
+  CHECK(Term::Private::is_valid_utf8(bad.begin(), bad.end()) == false);
+  std::string good{"0"};
+  CHECK(Term::Private::is_valid_utf8(good.begin(), good.end()) == true);
+  good = "a";
+  CHECK(Term::Private::is_valid_utf8(good.begin(), good.end()) == true);
+  good = "\xc3\xb1";
+  CHECK(Term::Private::is_valid_utf8(good.begin(), good.end()) == true);
+  good = "\xe2\x82\xa1";
+  CHECK(Term::Private::is_valid_utf8(good.begin(), good.end()) == true);
+  good = "\xf0\x90\x8c\xbc";
+  CHECK(Term::Private::is_valid_utf8(good.begin(), good.end()) == true);
+  good = {"n → ∞, ∑ f(i) = ∏ g(i)γνωρίζω ἀπὸ τὴν ὄψηდარგებში⠝⠁⠊⠇ ⠁⠎ ⠹⠑ ⠙როგორიცააᚻ∂∈ℝ∧∪≡∞ ↑"};
+  CHECK(Term::Private::is_valid_utf8(good.begin(), good.end()) == true);
+}
+
+TEST_CASE("utf8_codepoint_size")
+{
+  std::string one = "a";
+  CHECK(Term::Private::utf8_codepoint_size(one[0]) == 1);
+  std::string two = "\xc3\xb1";
+  CHECK(Term::Private::utf8_codepoint_size(two[0]) == 2);
+  std::string three = "\xe2\x82\xa1";
+  CHECK(Term::Private::utf8_codepoint_size(three[0]) == 3);
+  std::string four = "\xf0\x90\x8c\xbc";
+  CHECK(Term::Private::utf8_codepoint_size(four[0]) == 4);
 }

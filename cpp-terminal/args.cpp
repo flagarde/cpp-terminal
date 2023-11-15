@@ -12,9 +12,9 @@
 namespace Term
 {
 
-Term::Arguments::Arguments() {}
+Term::Arguments::Arguments() {}  //NOLINT(hicpp-use-equals-default,modernize-use-equals-default)
 
-Term::Argc::Argc() {}
+Term::Argc::Argc() {}  //NOLINT(hicpp-use-equals-default,modernize-use-equals-default)
 
 Term::Argc::operator unsigned int() { return static_cast<unsigned int>(Term::Arguments::argc()); }
 
