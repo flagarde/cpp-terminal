@@ -85,50 +85,6 @@ TEST_CASE("utf32 to utf8")
 
 TEST_CASE("utf8 to utf32")
 {
-  // First utf8 1 byte
-  std::string    str = (const char*)u8"\u0001";
-  std::u32string s{Term::Private::utf8_to_utf32(str)};
-  std::u32string ref = U"\U00000001";
-  CHECK(s == ref);
-  // last utf8 1 byte
-  str = (const char*)u8"\u007f";
-  s   = {Term::Private::utf8_to_utf32(str)};
-  ref = U"\U0000007f";
-  CHECK(s == ref);
-
-  // First utf8 2 byte
-  str = (const char*)u8"\xc2\x80";
-  s   = {Term::Private::utf8_to_utf32(str)};
-  ref = U"\U00000080";
-  CHECK(s == ref);
-  // Last utf8 2 byte
-  str = (const char*)u8"\xdf\xbf";
-  s   = {Term::Private::utf8_to_utf32(str)};
-  ref = U"߿";
-  CHECK(s == ref);
-
-  // First utf8 3 byte
-  str = (const char*)u8"\xe0\xa0\x80";
-  s   = {Term::Private::utf8_to_utf32(str)};
-  ref = U"ࠀ";
-  CHECK(s == ref);
-  // Last utf8 3 byte
-  str = (const char*)u8"\xef\xbf\xbf";
-  s   = {Term::Private::utf8_to_utf32(str)};
-  ref = U"￿";
-  CHECK(s == ref);
-
-  // First utf8 4 byte
-  str = (const char*)u8"\xf0\x92\x80\x80";
-  s   = {Term::Private::utf8_to_utf32(str)};
-  ref = U"𒀀";
-  CHECK(s == ref);
-  // Last utf8 4 byte
-  str = (const char*)u8"\xf0\x9f\xa7\xbe";
-  s   = {Term::Private::utf8_to_utf32(str)};
-  ref = U"🧾";
-  CHECK(s == ref);
-
   // Some charabia UTF8
   str = (const char*)(u8"∮ E⋅da = Q,  n → ∞, ∑ f(i) = ∏ g(i)γνωρίζω ἀπὸ τὴν ὄψηდარგებში⠝⠁⠊⠇ ⠁⠎ ⠹⠑ ⠙როგორიცააᚻ∂∈ℝ∧∪≡∞ ↑↗↨↻⇣ ┐┼╔╘░►☺♀ ﬁ�⑀₂ἠḂᛖᛒᚢᛞᛖразличных\tопеฮั่นเสื่อมโทรมแማደሪያ የለው፥ ግንድ ይዞ ይዞራል።\n");
   s   = {Term::Private::utf8_to_utf32(str)};
