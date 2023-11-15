@@ -1,4 +1,3 @@
-
 <p align="center">
   <img src="docs/imgs/logo.svg" alt="CPP-Terminal logo"/>
 </p>
